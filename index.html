@@ -32,13 +32,14 @@
   }
   .app{
     display:flex;
+    background-color: rgba(85, 81, 81, 0.329);
     min-height:100vh;
   }
   /* SIDEBAR */
   .sidebar{
     width:230px;
     flex-shrink:0;
-    background:#6B593B;
+    background: rgba(0, 0, 0, 0.644);
     color: #6B593B;
     padding:36px 22px;
     position:sticky;
@@ -46,19 +47,29 @@
     height:100vh;
   }
   .brand{
+    text-align: center;
+    color: white;
     font-family:'Fraunces',serif;
     font-weight:600;
-    font-size:1.5rem;
+    font-size:1.9rem;
     line-height:1.15;
     margin-bottom:6px;
   }
-  .brand span{color:var(--coral);}
   .brand-sub{
-    font-size:.8rem;
-    color:#B9C7C2;
+    text-align: center;
+    font-size:0.9rem;
+    color: black;
     margin-bottom:34px;
   }
-  nav{display:flex;flex-direction:column;gap:4px;}
+ 
+ .highlight{
+  color: #3d2c1c;
+ }
+
+  nav{
+    display:flex;flex-direction:column;gap:4px;
+  }
+
   nav button{
     all:unset;
     cursor:pointer;
@@ -70,18 +81,20 @@
   }
   nav button:hover{background:rgba(255,255,255,.06);}
   nav button.active{
-    background:var(--coral);
-    color:#241005;
+    background:#3d2c1c;
+    color:#000000;
     font-weight:600;
   }
   .sidebar-foot{
+    text-align:center;
     margin-top:40px;
-    font-size:.72rem;
-    color:#7E8F89;
+    font-size:.9rem;
+    color:black;
     line-height:1.5;
     border-top:1px solid rgba(255,255,255,.12);
     padding-top:16px;
   }
+
  
   /* MAIN */
   main{
@@ -136,7 +149,7 @@
   }
   .hero p{
     font-size:1.05rem;
-    color:#D9E4DF;
+    color: white;
     max-width:46ch;
     margin:0;
   }
@@ -146,7 +159,7 @@
     gap:18px;
   }
   .feature{
-    background:var(--paper-alt);
+    background: #6B593B;
     border:1px solid var(--line);
     border-radius:14px;
     padding:22px 24px;
@@ -155,11 +168,11 @@
     font-family:'Fraunces',serif;
     font-size:1.08rem;
     margin:0 0 6px;
-    color:var(--teal-deep);
+    color: white;
   }
   .feature p{
     margin:0;
-    color:var(--ink-soft);
+    color:white;
     font-size:.9rem;
     line-height:1.5;
   }
@@ -294,6 +307,16 @@
     font-size:1.7rem;
     color:var(--coral);
   }
+
+  .noctisinsta {
+    color: black;
+    text-decoration: none;
+  }
+
+  .noctisinsta:hover{
+    color: white;
+  }
+
   .stat-mini label{font-size:.8rem; color:var(--ink-soft);}
   .today-note{
     font-size:.88rem;
@@ -327,8 +350,14 @@
  
   @media (max-width:820px){
     .app{flex-direction:column;}
+    .brand {
+      font-size:2.5rem;
+    }
+    .brand.sup{
+      font-size:1.1rem;
+    }
     .sidebar{width:100%; height:auto; position:relative; padding:22px;}
-    nav{flex-direction:row; flex-wrap:wrap;}
+    
     main{padding:28px 20px 60px;}
     .feature-grid{grid-template-columns:1fr;}
   }
@@ -338,8 +367,8 @@
  
 <div class="app">
   <aside class="sidebar">
-    <div class="brand">Rotina<span style="color: #ebe8e5;"> Noctis.</span></div>
-    <div class="brand-sub">Planejador semanal de hábitos e prioridades</div>
+    <div class="brand">Noctis<span style="color: #3d2c1c;"> Routine.</span></div>
+    <div class="brand-sub">Planeje sua semana, torne-se <span class="highlight">inreconhecível</span>.</div>
     <nav id="nav">
       <button data-page="capa" class="active">Início</button>
       <button data-page="resumo">Resumo</button>
@@ -349,8 +378,7 @@
       <button data-page="metas">Metas da semana</button>
     </nav>
     <div class="sidebar-foot">
-      Clique nas células para editar.<br>
-      Use Ctrl/Cmd + P para imprimir ou salvar em PDF.
+      <p>Essa rotina foi desenvolvida por <a href="https://instagram.com/noctishub/" class="noctisinsta" rel="external" target="_blank">Noctis</a>.</p>
     </div>
   </aside>
  
