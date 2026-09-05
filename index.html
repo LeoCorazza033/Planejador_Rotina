@@ -102,13 +102,18 @@
     padding:48px 56px 80px;
     max-width:1100px;
   }
-  .page{display:none;}
-  .page.active{display:block; animation:fade .25s ease;}
+  .page{
+    display:none;
+  }
+  .page.active{
+    display:grid; animation:fade .25s ease;
+  }
   @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
  
   h1.page-title{
     font-family:'Fraunces',serif;
     font-weight:600;
+    text-align: center;
     font-size:2rem;
     margin:0 0 6px;
     color:var(--teal-deep);
@@ -116,8 +121,9 @@
   .page-sub{
     color:var(--ink-soft);
     margin:0 0 32px;
+    text-align: center;
     font-size:.98rem;
-    max-width:60ch;
+    
   }
  
  
@@ -278,7 +284,7 @@
     display:flex;
     gap:40px;
     align-items:flex-end;
-    background:var(--paper-alt);
+    background: #6B593B;
     border:1px solid var(--line);
     border-radius:18px;
     padding:36px 40px;
@@ -295,7 +301,7 @@
   }
   .stat-big .stat-label{
     font-size:.88rem;
-    color:var(--ink-soft);
+    color:white;
     margin-top:6px;
     max-width:22ch;
   }
