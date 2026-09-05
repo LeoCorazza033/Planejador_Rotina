@@ -1,0 +1,668 @@
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planejador de Rotina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --paper-alt:#EFEAE0;
+    --ink:#26312E;
+    --ink-soft:#5B655F;
+    --teal:#22615C;
+    --teal-deep:#173F3C;
+    --coral:#E2703A;
+    --coral-soft:#F3D9C8;
+    --line:#D8D0BE;
+    --fill:#FBF4E6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+  /* SIDEBAR */
+  .sidebar{
+    width:230px;
+    flex-shrink:0;
+    background:#6B593B;
+    color: #6B593B;
+    padding:36px 22px;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .brand{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.5rem;
+    line-height:1.15;
+    margin-bottom:6px;
+  }
+  .brand span{color:var(--coral);}
+  .brand-sub{
+    font-size:.8rem;
+    color:#B9C7C2;
+    margin-bottom:34px;
+  }
+  nav{display:flex;flex-direction:column;gap:4px;}
+  nav button{
+    all:unset;
+    cursor:pointer;
+    padding:11px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+    color:#DCE5DF;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav button:hover{background:rgba(255,255,255,.06);}
+  nav button.active{
+    background:var(--coral);
+    color:#241005;
+    font-weight:600;
+  }
+  .sidebar-foot{
+    margin-top:40px;
+    font-size:.72rem;
+    color:#7E8F89;
+    line-height:1.5;
+    border-top:1px solid rgba(255,255,255,.12);
+    padding-top:16px;
+  }
+ 
+  /* MAIN */
+  main{
+    flex:1;
+    padding:48px 56px 80px;
+    max-width:1100px;
+  }
+  .page{display:none;}
+  .page.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+ 
+  h1.page-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:2rem;
+    margin:0 0 6px;
+    color:var(--teal-deep);
+  }
+  .page-sub{
+    color:var(--ink-soft);
+    margin:0 0 32px;
+    font-size:.98rem;
+    max-width:60ch;
+  }
+ 
+ 
+  /* CAPA */
+  .hero{
+ 
+    background-color: #6B593B;
+    color:#F3EEE1;
+    border-radius:18px;
+    padding:56px 48px;
+    margin-bottom:36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(226,112,58,.35), transparent 70%);
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:2.6rem;
+    margin:0 0 12px;
+    max-width:14ch;
+  }
+  .hero p{
+    font-size:1.05rem;
+    color:#D9E4DF;
+    max-width:46ch;
+    margin:0;
+  }
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+  }
+  .feature{
+    background:var(--paper-alt);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 24px;
+  }
+  .feature h3{
+    font-family:'Fraunces',serif;
+    font-size:1.08rem;
+    margin:0 0 6px;
+    color:var(--teal-deep);
+  }
+  .feature p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:.9rem;
+    line-height:1.5;
+  }
+ 
+  /* COMO USAR */
+  .steps{counter-reset:step;}
+  .step{
+    display:flex;
+    gap:18px;
+    padding:20px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:none;}
+  .step-num{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.3rem;
+    color:var(--coral);
+    width:34px;
+    flex-shrink:0;
+  }
+  .step h3{margin:0 0 4px; font-size:1.02rem;}
+  .step p{margin:0; color:var(--ink-soft); font-size:.92rem; line-height:1.55; max-width:65ch;}
+  .legend-row{display:flex; align-items:center; gap:10px; margin-top:6px;}
+  .swatch{width:18px; height:18px; border-radius:4px; border:1px solid var(--line);}
+ 
+  /* TABLES shared */
+  .table-wrap{overflow-x:auto; border-radius:12px; border:1px solid var(--line);}
+  table{border-collapse:collapse; width:100%; font-size:.86rem;}
+  thead th{
+    background:var(--teal-deep);
+    color:#EFE8DA;
+    font-weight:600;
+    padding:10px 8px;
+    position:sticky; top:0;
+    white-space:nowrap;
+  }
+  tbody th{
+    background:var(--coral-soft);
+    color:var(--teal-deep);
+    font-weight:600;
+    padding:8px;
+    white-space:nowrap;
+  }
+  td{
+    border:1px solid var(--line);
+    padding:0;
+    min-width:92px;
+    height:36px;
+    text-align:center;
+    background:var(--fill);
+  }
+  td[contenteditable="true"]{
+    outline:none;
+    padding:6px 8px;
+    cursor:text;
+  }
+  td[contenteditable="true"]:focus{
+    background:#fff;
+    box-shadow:inset 0 0 0 2px var(--coral);
+  }
+  .habit-cell{cursor:pointer; user-select:none; font-weight:700; color:var(--teal);}
+  .habit-name{
+    text-align:left !important;
+    min-width:190px;
+  }
+ 
+  /* metas */
+  .metas-table td{min-width:120px;}
+  .metas-table td.wide{min-width:260px; text-align:left;}
+  select{
+    width:100%; height:100%; border:none; background:transparent;
+    font-family:'Inter',sans-serif; font-size:.85rem; padding:8px; cursor:pointer;
+  }
+ 
+  .toolbar{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .btn{
+    all:unset;
+    cursor:pointer;
+    background:var(--teal);
+    color:#F3EEE1;
+    padding:9px 16px;
+    border-radius:8px;
+    font-size:.85rem;
+    font-weight:600;
+  }
+  .btn:hover{background:var(--teal-deep);}
+  .btn.ghost{
+    background:transparent;
+    color:var(--teal-deep);
+    border:1px solid var(--line);
+  }
+  .note{
+    font-size:.8rem;
+    color:var(--ink-soft);
+    margin-top:14px;
+  }
+ 
+  /* RESUMO */
+  .stat-hero{
+    display:flex;
+    gap:40px;
+    align-items:flex-end;
+    background:var(--paper-alt);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:36px 40px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .stat-big{display:flex; flex-direction:column;}
+  .stat-big .stat-num{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:4.2rem;
+    line-height:1;
+    color:var(--teal-deep);
+  }
+  .stat-big .stat-label{
+    font-size:.88rem;
+    color:var(--ink-soft);
+    margin-top:6px;
+    max-width:22ch;
+  }
+  .stat-mini-row{display:flex; gap:32px; flex-wrap:wrap;}
+  .stat-mini{display:flex; flex-direction:column;}
+  .stat-mini span{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.7rem;
+    color:var(--coral);
+  }
+  .stat-mini label{font-size:.8rem; color:var(--ink-soft);}
+  .today-note{
+    font-size:.88rem;
+    color:var(--teal-deep);
+    background:var(--fill);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 16px;
+    display:inline-block;
+  }
+ 
+  /* destaque do dia atual nas tabelas */
+  th.today-col, td.today-col{
+    background:var(--coral-soft) !important;
+  }
+  thead th.today-col{ background:var(--coral) !important; color:#241005 !important; }
+ 
+  @media print{
+    .sidebar, .toolbar, .note, .today-note{display:none !important;}
+    main{padding:0; max-width:none;}
+    .page{display:block !important; page-break-after:always;}
+    .page::before{
+      content: "Planejador de Rotina";
+      display:block;
+      font-family:'Fraunces',serif;
+      font-size:.8rem;
+      color:var(--ink-soft);
+      margin-bottom:10px;
+    }
+  }
+ 
+  @media (max-width:820px){
+    .app{flex-direction:column;}
+    .sidebar{width:100%; height:auto; position:relative; padding:22px;}
+    nav{flex-direction:row; flex-wrap:wrap;}
+    main{padding:28px 20px 60px;}
+    .feature-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+ 
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Rotina<span style="color: #ebe8e5;"> Noctis.</span></div>
+    <div class="brand-sub">Planejador semanal de hábitos e prioridades</div>
+    <nav id="nav">
+      <button data-page="capa" class="active">Início</button>
+      <button data-page="resumo">Resumo</button>
+      <button data-page="usar">Como usar</button>
+      <button data-page="rotina">Rotina semanal</button>
+      <button data-page="habitos">Hábitos diários</button>
+      <button data-page="metas">Metas da semana</button>
+    </nav>
+    <div class="sidebar-foot">
+      Clique nas células para editar.<br>
+      Use Ctrl/Cmd + P para imprimir ou salvar em PDF.
+    </div>
+  </aside>
+ 
+  <main>
+ 
+    <!-- CAPA -->
+    <section class="page active" id="capa">
+      <div class="hero">
+        <h1>Organize sua rotina, um dia de cada vez.</h1>
+        <p>Um planejador simples para estruturar sua semana, acompanhar hábitos e manter suas metas em dia — direto no navegador.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Rotina semanal</h3>
+          <p>Grade com horários de segunda a domingo para organizar cada compromisso do seu dia.</p>
+        </div>
+        <div class="feature">
+          <h3>Hábitos diários</h3>
+          <p>Acompanhe até 12 hábitos ao longo do mês com um clique para marcar cada dia cumprido.</p>
+        </div>
+        <div class="feature">
+          <h3>Metas da semana</h3>
+          <p>Liste prioridades, prazos e status para não perder o foco do que realmente importa.</p>
+        </div>
+        <div class="feature">
+          <h3>Pronto para imprimir</h3>
+          <p>Formatado para impressão em papel A4 — ótimo para quem prefere planejar à mão.</p>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- RESUMO -->
+    <section class="page" id="resumo">
+      <h1 class="page-title">Resumo</h1>
+      <p class="page-sub">Um retrato rápido do que já está preenchido nas outras abas.</p>
+      <div class="stat-hero">
+        <div class="stat-big">
+          <span class="stat-num" id="stat-habitos-pct">0%</span>
+          <span class="stat-label">dos hábitos marcados como cumpridos neste mês</span>
+        </div>
+        <div class="stat-mini-row">
+          <div class="stat-mini"><span id="stat-metas-total">0</span><label>metas cadastradas</label></div>
+          <div class="stat-mini"><span id="stat-metas-concluidas">0</span><label>concluídas</label></div>
+          <div class="stat-mini"><span id="stat-metas-andamento">0</span><label>em andamento</label></div>
+          <div class="stat-mini"><span id="stat-rotina-pct">0%</span><label>da grade semanal preenchida</label></div>
+        </div>
+      </div>
+      <div class="today-note" id="today-note"></div>
+    </section>
+ 
+    <!-- COMO USAR -->
+    <section class="page" id="usar">
+      <h1 class="page-title">Como usar</h1>
+      <p class="page-sub">Cinco passos para tirar o máximo proveito deste planejador.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>Preencha a rotina semanal</h3>
+            <p>Clique em qualquer célula da grade e digite a atividade prevista para aquele horário e dia.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>Marque seus hábitos</h3>
+            <p>Na aba de hábitos, clique em uma célula do dia correspondente para marcar ou desmarcar o cumprimento.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>Defina suas metas</h3>
+            <p>Escreva suas prioridades da semana, o prazo e escolha o status em cada linha da tabela de metas.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h3>Imprima quando quiser</h3>
+            <p>Use Ctrl/Cmd + P para gerar uma versão em papel ou em PDF de qualquer aba.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div>
+            <h3>Sobre os dados preenchidos</h3>
+            <p>Este arquivo é local: o conteúdo digitado não é salvo automaticamente ao fechar a página. Imprima ou faça capturas de tela para guardar seu planejamento.</p>
+            <div class="legend-row"><span class="swatch" style="background:var(--fill)"></span> Campo editável</div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ROTINA SEMANAL -->
+    <section class="page" id="rotina">
+      <h1 class="page-title">Rotina semanal</h1>
+      <p class="page-sub">Clique em uma célula e digite a atividade daquele horário.</p>
+      <div class="toolbar">
+        <button class="btn ghost" onclick="window.print()">Imprimir esta aba</button>
+      </div>
+      <div class="table-wrap">
+        <table id="tabela-rotina">
+          <thead>
+            <tr>
+              <th>Horário</th>
+              <th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th><th>Domingo</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+ 
+    <!-- HABITOS -->
+    <section class="page" id="habitos">
+      <h1 class="page-title">Hábitos diários</h1>
+      <p class="page-sub">Clique em uma célula do dia para marcar o hábito como cumprido.</p>
+      <div class="toolbar">
+        <button class="btn ghost" id="add-habito">+ Adicionar hábito</button>
+        <button class="btn ghost" onclick="window.print()">Imprimir esta aba</button>
+      </div>
+      <div class="table-wrap">
+        <table id="tabela-habitos">
+          <thead><tr id="habitos-head"><th>Hábito</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+ 
+    <!-- METAS -->
+    <section class="page" id="metas">
+      <h1 class="page-title">Metas da semana</h1>
+      <p class="page-sub">Defina suas prioridades e acompanhe o andamento de cada uma.</p>
+      <div class="toolbar">
+        <button class="btn ghost" id="add-meta">+ Adicionar meta</button>
+        <button class="btn ghost" onclick="window.print()">Imprimir esta aba</button>
+      </div>
+      <div class="table-wrap">
+        <table class="metas-table" id="tabela-metas">
+          <thead>
+            <tr><th>Nº</th><th>Meta / prioridade</th><th>Prazo</th><th>Prioridade</th><th>Status</th><th>Observações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note">Dica: use a prioridade para decidir por onde começar a semana.</p>
+    </section>
+ 
+  </main>
+</div>
+ 
+<script>
+  // ---------- Navegação ----------
+  const buttons = document.querySelectorAll('#nav button');
+  const pages = document.querySelectorAll('.page');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('active'));
+      pages.forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.page).classList.add('active');
+    });
+  });
+ 
+  // ---------- Rotina semanal ----------
+  const horarios = [];
+  for(let h=5; h<=22; h++){ horarios.push(String(h).padStart(2,'0')+':00'); }
+  const rotinaBody = document.querySelector('#tabela-rotina tbody');
+  const exemplos = {"05:00_1":"Exercício físico", "09:00_2":"Reunião de equipe"};
+  const hojeISO = new Date();
+  const diaSemanaHoje = hojeISO.getDay(); // 0=domingo ... 6=sábado
+  const colunaHojeRotina = diaSemanaHoje === 0 ? 7 : diaSemanaHoje; // 1=segunda ... 7=domingo
+  horarios.forEach(hora=>{
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = hora;
+    tr.appendChild(th);
+    for(let d=1; d<=7; d++){
+      const td = document.createElement('td');
+      td.contentEditable = "true";
+      const key = hora+"_"+d;
+      if(exemplos[key]) td.textContent = exemplos[key];
+      if(d === colunaHojeRotina) td.classList.add('today-col');
+      td.addEventListener('input', atualizarResumo);
+      tr.appendChild(td);
+    }
+    rotinaBody.appendChild(tr);
+  });
+  // destaca o cabeçalho do dia atual
+  const rotinaHeadCells = document.querySelectorAll('#tabela-rotina thead th');
+  if(rotinaHeadCells[colunaHojeRotina]) rotinaHeadCells[colunaHojeRotina].classList.add('today-col');
+ 
+  // ---------- Hábitos diários ----------
+  const habitosHead = document.getElementById('habitos-head');
+  const diaHojeMes = hojeISO.getDate();
+  for(let d=1; d<=31; d++){
+    const th = document.createElement('th');
+    th.textContent = d;
+    if(d === diaHojeMes) th.classList.add('today-col');
+    habitosHead.appendChild(th);
+  }
+  const habitosBody = document.querySelector('#tabela-habitos tbody');
+  const habitosIniciais = [
+    "Beber 2L de água","Praticar exercício","Ler 20 minutos","Dormir 8 horas",
+    "Meditar","Estudar","Sem redes sociais à noite","Planejar o dia seguinte"
+  ];
+  function addHabitoRow(nome=""){
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.className = "habit-name";
+    th.contentEditable = "true";
+    th.textContent = nome;
+    tr.appendChild(th);
+    for(let d=1; d<=31; d++){
+      const td = document.createElement('td');
+      td.className = "habit-cell";
+      if(d === diaHojeMes) td.classList.add('today-col');
+      td.addEventListener('click', ()=>{
+        td.textContent = td.textContent.trim() === "" ? "✓" : "";
+        atualizarResumo();
+      });
+      tr.appendChild(td);
+    }
+    habitosBody.appendChild(tr);
+  }
+  habitosIniciais.forEach(addHabitoRow);
+  document.getElementById('add-habito').addEventListener('click', ()=>{addHabitoRow(""); atualizarResumo();});
+ 
+  // ---------- Metas ----------
+  const metasBody = document.querySelector('#tabela-metas tbody');
+  let metaCount = 0;
+  function addMetaRow(preset){
+    metaCount++;
+    const tr = document.createElement('tr');
+ 
+    const tdNum = document.createElement('td');
+    tdNum.textContent = metaCount;
+    tr.appendChild(tdNum);
+ 
+    const tdMeta = document.createElement('td');
+    tdMeta.className = "wide";
+    tdMeta.contentEditable = "true";
+    tdMeta.textContent = preset ? preset.meta : "";
+    tr.appendChild(tdMeta);
+ 
+    const tdPrazo = document.createElement('td');
+    tdPrazo.contentEditable = "true";
+    tdPrazo.textContent = preset ? preset.prazo : "";
+    tr.appendChild(tdPrazo);
+ 
+    const tdPrioridade = document.createElement('td');
+    const selP = document.createElement('select');
+    ["Alta","Média","Baixa"].forEach(op=>{
+      const o = document.createElement('option');
+      o.value = op; o.textContent = op;
+      if(preset && preset.prioridade === op) o.selected = true;
+      selP.appendChild(o);
+    });
+    tdPrioridade.appendChild(selP);
+    tr.appendChild(tdPrioridade);
+ 
+    const tdStatus = document.createElement('td');
+    const selS = document.createElement('select');
+    ["Não iniciada","Em andamento","Concluída"].forEach(op=>{
+      const o = document.createElement('option');
+      o.value = op; o.textContent = op;
+      if(preset && preset.status === op) o.selected = true;
+      selS.appendChild(o);
+    });
+    selS.addEventListener('change', atualizarResumo);
+    tdStatus.appendChild(selS);
+    tr.appendChild(tdStatus);
+ 
+    const tdObs = document.createElement('td');
+    tdObs.className = "wide";
+    tdObs.contentEditable = "true";
+    tdObs.textContent = preset ? preset.obs : "";
+    tr.appendChild(tdObs);
+ 
+    metasBody.appendChild(tr);
+  }
+  addMetaRow({meta:"Fechar relatório mensal", prazo:"Sexta-feira", prioridade:"Alta", status:"Em andamento", obs:"Enviar para revisão até quinta"});
+  for(let i=0;i<5;i++) addMetaRow(null);
+  document.getElementById('add-meta').addEventListener('click', ()=>{addMetaRow(null); atualizarResumo();});
+ 
+  // ---------- Resumo ----------
+  function atualizarResumo(){
+    const celulasHabito = document.querySelectorAll('.habit-cell');
+    const marcadas = document.querySelectorAll('.habit-cell').length
+      ? [...celulasHabito].filter(td => td.textContent.trim() === '✓').length
+      : 0;
+    const pctHabitos = celulasHabito.length ? Math.round((marcadas / celulasHabito.length) * 100) : 0;
+    document.getElementById('stat-habitos-pct').textContent = pctHabitos + '%';
+ 
+    const statusSelects = [...document.querySelectorAll('#tabela-metas select')].filter(s => s.parentElement.cellIndex === 4);
+    document.getElementById('stat-metas-total').textContent = statusSelects.length;
+    document.getElementById('stat-metas-concluidas').textContent = statusSelects.filter(s => s.value === 'Concluída').length;
+    document.getElementById('stat-metas-andamento').textContent = statusSelects.filter(s => s.value === 'Em andamento').length;
+ 
+    const celulasRotina = document.querySelectorAll('#tabela-rotina td');
+    const preenchidas = [...celulasRotina].filter(td => td.textContent.trim() !== '').length;
+    const pctRotina = celulasRotina.length ? Math.round((preenchidas / celulasRotina.length) * 100) : 0;
+    document.getElementById('stat-rotina-pct').textContent = pctRotina + '%';
+ 
+    const dataFormatada = hojeISO.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+    document.getElementById('today-note').textContent = 'Hoje é ' + dataFormatada + ' — a coluna e o dia de hoje já vêm destacados na Rotina semanal e nos Hábitos diários.';
+  }
+  atualizarResumo();
+</script>
+ 
+</body>
+</html>
+ 
+
